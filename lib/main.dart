@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:wallpaper_app/pages/home_page.dart';
+import 'package:wallpaper_app/providers/wallpaper_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => WallpaperProvider()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -19,9 +23,8 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: HomePage.routeName,
       routes: {
-        HomePage.routeName : (context) => HomePage(),
+        HomePage.routeName: (context) => HomePage(),
       },
     );
   }
 }
-

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:wallpaper_app/customwidgets/body_tile.dart';
+import 'package:wallpaper_app/providers/wallpaper_provider.dart';
 import 'package:wallpaper_app/utils/constants.dart';
 
 import '../customwidgets/category_tile.dart';
@@ -13,9 +16,23 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
+  late WallpaperProvider provider;
+  bool isCalledOnce = true;
+
+  @override
+  void didChangeDependencies() {
+    if(isCalledOnce){
+      provider = Provider.of<WallpaperProvider>(context, listen: true);
+      provider.getData();
+    }
+    isCalledOnce = false;
+    super.didChangeDependencies();
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    final photoList = provider.wallpaperResponse?.photos ;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -29,25 +46,48 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           buildSectionSearch(),
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: SizedBox(
-              height: 80,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                itemCount: categoryModel.length,
+          buildSectionCategory(),
+          Expanded(
+            child: provider.hasDataLoaded? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: GridView.builder(
+
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                 childAspectRatio: .7,
+                    mainAxisSpacing: 7,
+                    crossAxisCount: 2),
+                itemCount: photoList!.length,
                 itemBuilder: (context, index) {
-                  final category = categoryModel[index];
-                  return CategoryTile(
-                    categoryName: category.categoryName,
-                    imageUrl: category.imageUrl,
-                  );
+                  final photo = photoList![index];
+                  return BodyTile(imgUrl: photo.src!.portrait!);
                 },
               ),
-            ),
+            ) : const Center(
+              child: CircularProgressIndicator(),
+            )
           ),
         ],
+      ),
+    );
+  }
+
+  Padding buildSectionCategory() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: SizedBox(
+        height: 80,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: categoryModel.length,
+          itemBuilder: (context, index) {
+            final category = categoryModel[index];
+            return CategoryTile(
+              categoryName: category.categoryName,
+              imageUrl: category.imageUrl,
+            );
+          },
+        ),
       ),
     );
   }
