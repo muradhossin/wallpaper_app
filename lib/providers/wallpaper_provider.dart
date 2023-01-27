@@ -7,11 +7,17 @@ import 'package:wallpaper_app/utils/constants.dart';
 
 class WallpaperProvider extends ChangeNotifier{
   WallpaperResponse? wallpaperResponse;
+  String categoryName = 'nature';
+
+  void setCategory(String catName){
+    categoryName = catName;
+    getData();
+  }
 
   bool get hasDataLoaded => wallpaperResponse != null;
 
   Future<void> getData() async{
-    final urlString = "https://api.pexels.com/v1/search?query=nature&per_page=80";
+    final urlString = "https://api.pexels.com/v1/search?query=$categoryName&per_page=80";
     try{
       final response = await Http.get(Uri.parse(urlString), headers: {
         "Authorization": apiKey

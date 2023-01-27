@@ -33,7 +33,7 @@ final List<CategoryModel> categoryModel = [
     imageUrl: "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=300",
   ),
   CategoryModel(
-    categoryName: "Nature",
+    categoryName: "Texture",
     imageUrl: "https://images.pexels.com/photos/15286/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   ),
   CategoryModel(
