@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wallpaper_app/customwidgets/body_tile.dart';
+import 'package:wallpaper_app/models/wallpaper_response.dart';
 import 'package:wallpaper_app/providers/wallpaper_provider.dart';
 import 'package:wallpaper_app/utils/constants.dart';
 
@@ -29,10 +30,14 @@ class _HomePageState extends State<HomePage> {
     super.didChangeDependencies();
   }
 
-
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
-    final photoList = provider.wallpaperResponse?.photos ;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -47,28 +52,33 @@ class _HomePageState extends State<HomePage> {
         children: [
           buildSectionSearch(),
           buildSectionCategory(),
-          Expanded(
-            child: provider.hasDataLoaded? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              child: GridView.builder(
-
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                 childAspectRatio: .7,
-                    mainAxisSpacing: 7,
-                    crossAxisCount: 2),
-                itemCount: photoList!.length,
-                itemBuilder: (context, index) {
-                  final photo = photoList![index];
-                  return BodyTile(imgUrl: photo.src!.portrait!);
-                },
-              ),
-            ) : const Center(
-              child: CircularProgressIndicator(),
-            )
-          ),
+          buildSectionBody(),
         ],
       ),
     );
+  }
+
+  Expanded buildSectionBody() {
+    final photoList = provider.wallpaperResponse?.photos ;
+    return Expanded(
+          child: provider.hasDataLoaded? Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: GridView.builder(
+
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+               childAspectRatio: .7,
+                  mainAxisSpacing: 7,
+                  crossAxisCount: 2),
+              itemCount: photoList!.length,
+              itemBuilder: (context, index) {
+                final photo = photoList![index];
+                return BodyTile(imgUrl: photo.src!.portrait!);
+              },
+            ),
+          ) : const Center(
+            child: CircularProgressIndicator(),
+          )
+        );
   }
 
   Padding buildSectionCategory() {
@@ -120,5 +130,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  getInput() {}
+  getInput() {
+    provider.setCategory(_searchController.text);
+  }
 }
