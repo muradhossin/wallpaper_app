@@ -39,6 +39,9 @@ dependencies:
   provider:
   http:
   cached_network_image:
+  permission_handler:
+  dio:
+  image_gallery_saver:
 
 dev_dependencies:
   flutter_test:
