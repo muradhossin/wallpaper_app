@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   void didChangeDependencies() {
     if(isCalledOnce){
       provider = Provider.of<WallpaperProvider>(context, listen: true);
-      provider.getData();
+      provider.getBodyData();
     }
     isCalledOnce = false;
     super.didChangeDependencies();

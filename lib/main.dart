@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wallpaper_app/pages/home_page.dart';
+import 'package:wallpaper_app/pages/photo_view_page.dart';
 import 'package:wallpaper_app/providers/wallpaper_provider.dart';
 
 void main() {
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
       initialRoute: HomePage.routeName,
       routes: {
         HomePage.routeName: (context) => HomePage(),
+        PhotoViewPage.routeName: (context) => PhotoViewPage(),
       },
     );
   }
