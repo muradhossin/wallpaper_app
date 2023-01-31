@@ -19,10 +19,17 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   late WallpaperProvider provider;
   bool isCalledOnce = true;
+  ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    scrollController.addListener(() {});
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
-    if(isCalledOnce){
+    if (isCalledOnce) {
       provider = Provider.of<WallpaperProvider>(context, listen: true);
       provider.getBodyData();
     }
@@ -35,9 +42,9 @@ class _HomePageState extends State<HomePage> {
     _searchController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -48,37 +55,88 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         backgroundColor: Colors.white,
       ),
-      body: Column(
+      body: SingleChildScrollView(
+        controller: scrollController,
+        child: Column(
+          children: [
+            buildSectionSearch(),
+            buildSectionCategory(),
+            buildSectionBody(),
+            buildSectionPage(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding buildSectionPage() {
+    final pageNumber = provider.wallpaperResponse?.page;
+    return Padding(
+      padding: const EdgeInsets.all(9.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          buildSectionSearch(),
-          buildSectionCategory(),
-          buildSectionBody(),
+          provider.hasDataLoaded
+              ? Container(
+                  child: (pageNumber! > 1)
+                      ? OutlinedButton(
+                          onPressed: () {
+                            if (pageNumber! > 1) {
+                              setState(() {
+                                scrollController.animateTo(0,
+                                    duration: Duration(microseconds: 500),
+                                    curve: Curves.fastOutSlowIn);
+                                provider.setPageNumber(pageNumber! - 1);
+                              });
+                            }
+                          },
+                          child: const Text('Previous page'),
+                        )
+                      : null,
+                )
+              : const Center(
+                  child: CircularProgressIndicator(),
+                ),
+          provider.hasDataLoaded
+              ? OutlinedButton(
+                  onPressed: () {
+                    setState(() {
+                      scrollController.animateTo(0,
+                          duration: Duration(microseconds: 500),
+                          curve: Curves.fastOutSlowIn);
+                      provider.setPageNumber(pageNumber! + 1);
+                    });
+                  },
+                  child: const Text('Next page'),
+                )
+              : const Center(
+                  child: CircularProgressIndicator(),
+                ),
         ],
       ),
     );
   }
 
-  Expanded buildSectionBody() {
-    final photoList = provider.wallpaperResponse?.photos ;
-    return Expanded(
-          child: provider.hasDataLoaded? Padding(
+  SingleChildRenderObjectWidget buildSectionBody() {
+    final photoList = provider.wallpaperResponse?.photos;
+    return provider.hasDataLoaded
+        ? Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: GridView.builder(
-
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-               childAspectRatio: .7,
-                  mainAxisSpacing: 7,
-                  crossAxisCount: 2),
+                  childAspectRatio: .7, mainAxisSpacing: 7, crossAxisCount: 2),
               itemCount: photoList!.length,
               itemBuilder: (context, index) {
                 final photo = photoList![index];
                 return BodyTile(imgUrl: photo.src!.portrait!);
               },
             ),
-          ) : const Center(
-            child: CircularProgressIndicator(),
           )
-        );
+        : const Center(
+            child: CircularProgressIndicator(),
+          );
   }
 
   Padding buildSectionCategory() {

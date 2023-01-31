@@ -48,12 +48,26 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ElevatedButton(
-                onPressed: () {
+                onPressed: isPermissionGranted ? null : () {
                   _save(imgUrl);
                 }, child: const Text("Save Image"),
               ),
-              if(isPermissionGranted) Text(downloadStatus),
-              if(isPermissionReject) Text(downloadStatus),
+              if(isPermissionGranted) Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                    decoration: const BoxDecoration(
+                        color: Colors.green
+                    ),
+                    child: Text(downloadStatus)),
+              ),
+              if(isPermissionReject) Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.green
+                  ),
+                    child: Text(downloadStatus)),
+              ),
             ],
           ),
         ),

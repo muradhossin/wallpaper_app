@@ -8,10 +8,16 @@ import 'package:wallpaper_app/utils/constants.dart';
 class WallpaperProvider extends ChangeNotifier{
   WallpaperResponse? wallpaperResponse;
   late String categoryName;
+  num pageNumber = 1;
 
   void setCategory(String catName){
     categoryName = catName;
     getCategoryData();
+  }
+
+  void setPageNumber (num pgNumber){
+    pageNumber = pgNumber;
+    getBodyData();
   }
 
   bool get hasDataLoaded => wallpaperResponse != null;
@@ -33,7 +39,7 @@ class WallpaperProvider extends ChangeNotifier{
   }
 
   Future<void> getBodyData() async{
-    final urlString = "https://api.pexels.com/v1/curated?per_page=80";
+    final urlString = "https://api.pexels.com/v1/curated/?page=$pageNumber&per_page=16";
     try{
       final response = await Http.get(Uri.parse(urlString), headers: {
         "Authorization": apiKey
