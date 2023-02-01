@@ -17,6 +17,9 @@ class CategoryTile extends StatelessWidget {
       child: InkWell(
         onTap: (){
           Provider.of<WallpaperProvider>(context, listen: false).setCategory(categoryName);
+          Provider.of<WallpaperProvider>(context,listen: false).setPageNumber(1);
+          Provider.of<WallpaperProvider>(context,listen: false).getCategoryData();
+
         },
         child: Stack(
           children: [

@@ -82,12 +82,24 @@ class _HomePageState extends State<HomePage> {
                       ? OutlinedButton(
                           onPressed: () {
                             if (pageNumber! > 1) {
+
                               setState(() {
                                 scrollController.animateTo(0,
                                     duration: Duration(microseconds: 500),
                                     curve: Curves.fastOutSlowIn);
-                                provider.setPageNumber(pageNumber! - 1);
                               });
+                              if(provider.hasCategoryName){
+                                provider.setPageNumber(pageNumber! - 1);
+                                provider.getCategoryData();
+                              }
+                              else if(_searchController.text.isNotEmpty){
+                                provider.setPageNumber(pageNumber! - 1);
+                                getInput();
+                              }else{
+                                provider.setPageNumber(pageNumber! - 1);
+                                provider.getBodyData();
+                              }
+
                             }
                           },
                           child: const Text('Previous page'),
@@ -104,8 +116,18 @@ class _HomePageState extends State<HomePage> {
                       scrollController.animateTo(0,
                           duration: Duration(microseconds: 500),
                           curve: Curves.fastOutSlowIn);
-                      provider.setPageNumber(pageNumber! + 1);
                     });
+                    if(provider.hasCategoryName){
+                      provider.setPageNumber(pageNumber! + 1);
+                      provider.getCategoryData();
+                    }
+                    else if(_searchController.text.isNotEmpty){
+                      provider.setPageNumber(pageNumber! + 1);
+                      getInput();
+                    }else{
+                      provider.setPageNumber(pageNumber! + 1);
+                      provider.getBodyData();
+                    }
                   },
                   child: const Text('Next page'),
                 )
@@ -172,15 +194,31 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.circular(30),
             ),
             child: TextField(
+
               controller: _searchController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'search',
-                suffixIcon: Icon(Icons.search),
                 border: InputBorder.none,
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: (){
+                        getInput();
+                      },
+                      icon: const Icon(Icons.search),
+                    ),
+                    IconButton(
+                      onPressed: (){
+                        _searchController.clear();
+                        provider.setPageNumber(1);
+                        provider.getBodyData();
+                      },
+                      icon: const Icon(Icons.delete_forever),
+                    ),
+                  ],
+                ),
               ),
-              onTap: () {
-                getInput();
-              },
             ),
           ),
         ),
@@ -190,5 +228,7 @@ class _HomePageState extends State<HomePage> {
 
   getInput() {
     provider.setCategory(_searchController.text);
+    provider.setPageNumber(1);
+    provider.getCategoryData();
   }
 }
