@@ -47,24 +47,29 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Wallpaper Store',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(fontSize: 25, color: Colors.grey.shade700)
         ),
         elevation: 0.0,
         centerTitle: true,
         backgroundColor: Colors.white,
       ),
-      body: SingleChildScrollView(
-        controller: scrollController,
-        child: Column(
-          children: [
-            buildSectionSearch(),
-            buildSectionCategory(),
-            buildSectionBody(),
-            buildSectionPage(),
-          ],
-        ),
+      body: RefreshIndicator(
+        onRefresh: () async{
+          provider.getBodyData();
+        },
+        child: SingleChildScrollView(
+          controller: scrollController,
+          child: Column(
+              children: [
+                buildSectionSearch(),
+                buildSectionCategory(),
+                buildSectionBody(),
+                buildSectionPage(),
+              ],
+            ),
+          ),
       ),
     );
   }
