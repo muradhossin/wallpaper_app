@@ -32,7 +32,7 @@ Clone the repository
 Move to the desired folder
 
 ```bash
-  cd \wallpaper_app.git
+  cd \wallpaper_app
 ```
 To run the app, simply write
 
